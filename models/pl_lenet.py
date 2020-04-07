@@ -1,4 +1,3 @@
-# import numpy as np
 import argparse
 from argparse import Namespace
 import pytorch_lightning as pl
