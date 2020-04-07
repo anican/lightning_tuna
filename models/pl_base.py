@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import argparse
 from argparse import Namespace
 import pytorch_lightning as pl
@@ -11,42 +12,12 @@ from torchvision import datasets
 from torchvision import transforms
 
 
-class LeNet(pl.LightningModule):
-    """
-    LeNet was the first convolutional neural networks (CNN) model designed for
-    image recognition on the MNIST database. This particular architecture was
-    first introduced in the 1990's by Yann LeCun at New York University.
-
-    This particular model is adjusted for use on the CIFAR10 database.
-    """
-    def __init__(self, hparams: Namespace, paths, num_classes: int = 10):
-        super(LeNet, self).__init__()
+class LightningBase(pl.LightningModule, ABC):
+    @abstractmethod
+    def __init__(self, hparams: Namespace, paths):
+        super(LightningBase, self).__init__()
         self.hparams = hparams
         self.paths = paths
-        self.layers = nn.Sequential(
-            nn.Conv2d(3, 6, 5),
-            nn.BatchNorm2d(6),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            nn.Conv2d(6, 16, 5),
-            nn.BatchNorm2d(16),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-        )
-        self.classifier = nn.Sequential(
-            nn.Linear(16*5*5, 120),
-            nn.BatchNorm1d(120),
-            nn.ReLU(),
-            nn.Linear(120, 84),
-            nn.BatchNorm1d(84),
-            nn.Linear(84, num_classes),
-        )
-
-    def forward(self, inputs):
-        features = self.layers(inputs)
-        features = features.view(features.size(0), -1)
-        outputs = self.classifier(features)
-        return outputs
 
     def prepare_data(self):
         mean = (0.4914, 0.4822, 0.4465)
@@ -117,22 +88,3 @@ class LeNet(pl.LightningModule):
                 weight_decay=weight_decay)
         # scheduler = lr_scheduler.StepLR(optimizer, step_size=1)
         return optimizer
-
-def _test():
-    parser = argparse.ArgumentParser(prog='lightning_tuna')
-    parser.add_argument('--batch_size', type=int, default=256)
-    parser.add_argument('--test_batch_size', type=int, default=64)
-    parser.add_argument('--lr', type=float, default=0.01)
-    parser.add_argument('--weight_decay', type=float, default=1e-5)
-    parser.add_argument('--momentum', type=float, default=0.9)
-    args = parser.parse_args()
-
-    inputs = torch.randn(50, 3, 32, 32)
-    print("inputs shape", inputs.shape)
-    model = LeNet(args, paths=None)
-    outputs = model(inputs)
-    print(outputs.shape)
-
-if __name__ == '__main__':
-    _test()
-
