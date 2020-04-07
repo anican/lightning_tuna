@@ -6,16 +6,10 @@ from paths import Paths
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
+from torch.cuda import device_count as gpu_count
 
 
-"""
-Testing:
-    [√] argument parser
-    [] trainer
-    [] lightning module
-    [] test
-"""
-def get_args():
+def parse_args():
     parser = argparse.ArgumentParser(prog='lightning_tuna',
             description='<Description of Experiment>')
     parser.add_argument('--batch_size', type=int, default=256)
@@ -38,35 +32,31 @@ def get_args():
     return parser.parse_args()
 
 
-def main(hparams):
+def main():
+    args = parse_args()
+
     paths = Paths()
     checkpoints_path = str(paths.CHECKPOINTS_PATH)
     logging_path = str(paths.LOG_PATH)
+
     callbacks = [PrintCallback()]
     checkpoint_callback = ModelCheckpoint(
-        filepath=checkpoints_path + '/{epoch}-{val_acc:.3f}',
-        save_top_k=True,
-        verbose=True,
-        monitor='val_acc',
-        mode='max',
-        prefix=''
+        filepath=checkpoints_path + '/{epoch}-{val_acc:.3f}', save_top_k=True,
+        verbose=True, monitor='val_acc', mode='max', prefix=''
     )
     early_stop_callback = EarlyStopping(
-        monitor='val_acc',
-        mode='max',
-        verbose=False,
-        strict=False,
-        min_delta=0.0,
-        patience=2
+        monitor='val_acc', mode='max', verbose=False, strict=False,
+        min_delta=0.0, patience=2
     )
-    log_save_interval = hparams.log_save_interval
+    gpus = gpu_count()
+    log_save_interval = args.log_save_interval
     logger = TensorBoardLogger(save_dir=logging_path, name='tuna-log')
-    max_epochs = hparams.epochs
+    max_epochs = args.epochs
 
-    model = LeNet(hparams=hparams, paths=paths)
+    model = LeNet(hparams=args, paths=paths)
     trainer = Trainer(
         callbacks=callbacks, checkpoint_callback=checkpoint_callback,
-        early_stop_callback=early_stop_callback, fast_dev_run=True,
+        early_stop_callback=early_stop_callback, fast_dev_run=True, gpus=gpus,
         log_save_interval=log_save_interval, logger=logger,
         max_epochs=max_epochs, min_epochs=1, show_progress_bar=True,
         weights_summary='full',
@@ -75,6 +65,5 @@ def main(hparams):
 
 
 if __name__ == '__main__':
-    args = get_args()
-    main(args)
+    main()
 
