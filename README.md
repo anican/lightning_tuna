@@ -9,6 +9,15 @@ environment using the given yaml file:
 ```
 conda env create -f environment.yml
 ```
+### Installing miniconda
+Don't have conda? Run
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+```
+and then run 
+```
+bash Miniconda3-latest-Linux-x86_64.sh
+```
 ## Run Experiments!
 The default method of running the experiments is simple:
 ```
