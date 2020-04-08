@@ -1,12 +1,10 @@
 from abc import ABC, abstractmethod
-import argparse
 from argparse import Namespace
 import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from torch import nn
 from torch import optim
-from torch.optim import lr_scheduler
+# from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets
 from torchvision import transforms
