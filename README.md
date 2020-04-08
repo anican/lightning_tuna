@@ -18,6 +18,16 @@ and then run
 ```
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
+## Models
+By default, the following models are currently supported:
+1. LeNet
+2. VGGNet 
+3. ResNet
+I plan on adding the following models very soon:
+1. AlexNet
+2. GoogLeNet
+3. DenseNet
+4. ResNeXt
 ## Run Experiments!
 The default method of running the experiments is simple:
 ```
