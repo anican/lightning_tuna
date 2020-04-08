@@ -95,35 +95,65 @@ class ResNet(LightningBase):
         return out
 
 
-# def ResNet18(hparams, paths, num_classes=10):
-#     return ResNet(BasicBlock, [2,2,2,2], num_classes)
-#
-# def ResNet34(num_classes=10):
-#     return ResNet(BasicBlock, [3,4,6,3], num_classes)
-#
-# def ResNet50(num_classes=10):
-#     return ResNet(Bottleneck, [3,4,6,3], num_classes)
-#
-# def ResNet101(num_classes=10):
-#     return ResNet(Bottleneck, [3,4,23,3], num_classes)
-#
-# def ResNet152(num_classes=10):
-#     return ResNet(Bottleneck, [3,8,36,3], num_classes)
+def ResNet18(hparams, paths):
+    num_blocks = [2, 2, 2, 2]
+    return ResNet(hparams=hparams, paths=paths, block=BasicBlock, num_blocks=num_blocks, num_classes=10)
 
 
-def _test():
+def ResNet34(hparams, paths):
+    num_blocks = [3, 4, 6, 3]
+    return ResNet(hparams=hparams, paths=paths, block=BasicBlock, num_blocks=num_blocks, num_classes=10)
+
+
+def ResNet50(hparams, paths):
+    num_blocks = [3, 4, 6, 3]
+    return ResNet(hparams=hparams, paths=paths, block=Bottleneck, num_blocks=num_blocks, num_classes=10)
+
+
+def ResNet101(hparams, paths):
+    num_blocks = [3, 4, 23, 3]
+    return ResNet(hparams=hparams, paths=paths, block=Bottleneck, num_blocks=num_blocks, num_classes=10)
+
+
+def ResNet152(hparams, paths):
+    num_blocks = [3, 8, 36, 3]
+    return ResNet(hparams=hparams, paths=paths, block=Bottleneck, num_blocks=num_blocks, num_classes=10)
+
+
+def _test_basic(args):
+    # net = ResNet(hparams=args, paths="hi", num_blocks=[2,2,2,2], block=BasicBlock)
+    model18 = ResNet18(args, paths="hi")
+    y = model18(torch.randn(50, 3, 32, 32))
+    print("resnet18:", "BasicBlock", tuple(y.size()))
+
+    model34 = ResNet34(args, paths="hi")
+    y = model34(torch.randn(50, 3, 32, 32))
+    print("resnet34:", "BasicBlock", tuple(y.size()))
+
+
+def _test_bottleneck(args):
+    model50 = ResNet50(args, paths='')
+    y = model50(torch.randn(50, 3, 32, 32))
+    print("resnet50:", "Bottleneck", tuple(y.size()))
+
+
+    model101 = ResNet101(args, paths='')
+    y = model101(torch.randn(50, 3, 32, 32))
+    print("resnet101:", "Bottleneck", tuple(y.size()))
+
+    model152 = ResNet152(args, paths='')
+    y = model152(torch.randn(50, 3, 32, 32))
+    print("resnet152:", "Bottleneck", tuple(y.size()))
+
+
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='lightning_tuna')
     parser.add_argument('--batch_size', type=int, default=256)
     parser.add_argument('--test_batch_size', type=int, default=64)
     parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--momentum', type=float, default=0.9)
-    args = parser.parse_args()
-    net = ResNet(hparams=args, paths="hi", num_blocks=[2,2,2,2], block=BasicBlock)
-    y = net(torch.randn(50,3,32,32))
-    print(y.size())
-
-
-if __name__ == '__main__':
-    _test()
+    test_args = parser.parse_args()
+    _test_basic(test_args)
+    _test_bottleneck(test_args)
 

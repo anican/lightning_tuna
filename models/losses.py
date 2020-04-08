@@ -16,6 +16,7 @@ def p_loss(output, target, p) -> float:
         dim=1)**(1./p)).item()
     return loss
 
+
 def square_loss(output, target):
     loss = torch.mean((output - target)**2)
     return loss
