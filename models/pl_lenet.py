@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 from torch import optim
+from torch.multiprocessing import cpu_count
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader, random_split
 from torchvision import datasets
@@ -100,13 +101,16 @@ class LeNet(pl.LightningModule):
         return {'avg_test_loss': avg_loss, 'log': tensorboard_logs}
 
     def train_dataloader(self):
-        return DataLoader(self.cifar_train, self.hparams.batch_size)
+        return DataLoader(self.cifar_train, self.hparams.batch_size,
+                num_workers=cpu_count())
 
     def val_dataloader(self):
-        return DataLoader(self.cifar_val, self.hparams.test_batch_size)
+        return DataLoader(self.cifar_val, self.hparams.test_batch_size,
+                num_workers=cpu_count())
 
     def test_dataloader(self):
-        return DataLoader(self.cifar_test, self.hparams.test_batch_size)
+        return DataLoader(self.cifar_test, self.hparams.test_batch_size,
+                num_workers=cpu_count())
 
     def configure_optimizers(self):
         lr = self.hparams.lr

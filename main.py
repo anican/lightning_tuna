@@ -12,23 +12,24 @@ from torch.cuda import device_count as gpu_count
 def parse_args():
     parser = argparse.ArgumentParser(prog='lightning_tuna',
             description='<Description of Experiment>')
+    parser.add_argument('--architecture', type=str, default='mlp')
     parser.add_argument('--batch_size', type=int, default=256)
     parser.add_argument('--test_batch_size', type=int, default=64)
+    parser.add_argument('--criterion', type=str, default="cross_entropy",
+            help='cross_entropy or linear_hinge')
+    parser.add_argument('--dev_run', type=bool, default=False)
     parser.add_argument('--epochs', type=int, default=1)
-    parser.add_argument('--lr', type=float, default=0.01)
-    parser.add_argument('--weight_decay', type=float, default=1e-5)
     parser.add_argument('--levy_alpha', type=float, default=-1.0,
             help='tail index of added levy motion')
     parser.add_argument('--levy_sigma', type=float, default=-1.0,
             help='scale parameter of added levy noise')
+    parser.add_argument('--log_save_interval', type=int, default=100)
+    parser.add_argument('--lr', type=float, default=0.01)
     parser.add_argument('--momentum', type=float, default=0.0)
     parser.add_argument('--neurons', type=int, default=1024,
             help='number of neurons in hidden layer')
-    parser.add_argument('--log_save_interval', type=int, default=100)
-    parser.add_argument('--criterion', type=str, default="cross_entropy",
-            help='cross_entropy or linear_hinge')
     parser.add_argument('--seed', type=int, default=0)
-    parser.add_argument('--architecture', type=str, default='mlp')
+    parser.add_argument('--weight_decay', type=float, default=1e-5)
     return parser.parse_args()
 
 
