@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--criterion', type=str, default="cross_entropy",
             help='cross_entropy or linear_hinge')
     parser.add_argument('--dev_run', type=bool, default=False)
-    parser.add_argument('--epochs', type=int, default=1)
+    parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--levy_alpha', type=float, default=-1.0,
             help='tail index of added levy motion')
     parser.add_argument('--levy_sigma', type=float, default=-1.0,
@@ -52,6 +52,7 @@ def main():
     gpus = gpu_count()
     log_save_interval = args.log_save_interval
     logger = TensorBoardLogger(save_dir=logging_path, name='tuna-log')
+    logger.log_hyperparams(args)
     max_epochs = args.epochs
 
     model = LeNet(hparams=args, paths=paths)
